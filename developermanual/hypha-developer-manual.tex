@@ -1,0 +1,278 @@
+\documentclass[english,a4paper,11pt]{report}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+	showstringspaces=false,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue}
+}
+
+
+
+% Title Page
+\title{Hypha Developer Manual}
+\author{Christian M}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	This Manual describes how to build the hypha project repositories.
+\end{abstract}
+
+\chapter{URLs}
+
+\section{Website}
+The Website is hosted on 
+\href{https://hyphaproject.github.io/}{hyphaproject.github.io}
+
+\section{Chat}
+There is a public chat for the project at 
+\href{https://gitter.im/hyphaproject/public}{gitter.im}
+
+\section{Git}
+Our primary Version Control System is GIT.
+Following repositories exist on github.com:
+\begin{itemize}
+	\item https://github.com/hyphaproject/hypha
+	\item https://github.com/hyphaproject/hyphahandlers
+	\item https://github.com/hyphaproject/hyphaplugins
+	\item https://github.com/hyphaproject/hyphamanager
+	\item https://github.com/hyphaproject/hypharunner
+\end{itemize}
+
+\chapter{Prerequirements}
+Install git, cmake, ssl and some databases
+\begin{lstlisting}[language=bash,caption={prerequirements}]
+sudo apt-get install git cmake rpm
+sudo apt-get install openssl libssl-dev
+sudo apt-get install libmysqlclient-dev libpq-dev\
+ libiodbc2 libiodbc2-dev
+\end{lstlisting}
+
+
+\chapter{Development}
+
+\section{Qt}
+\begin{lstlisting}[language=bash,caption={install qt libraries}]
+sudo apt-get install qt5-default qttools5-dev\
+ libqt5sql5-mysql libqt5sql5-odbc libqt5serialport5-dev
+\end{lstlisting}
+
+\section{Poco}
+We need to clone and Build the Poco Libraries from Github.
+\begin{lstlisting}[language=bash,caption={git clone poco}]
+git clone --depth 1 https://github.com/pocoproject/poco
+\end{lstlisting}
+\begin{lstlisting}[language=bash,caption={build poco}]
+sudo sh build_cmake.sh
+\end{lstlisting}
+
+
+\section{Boost}
+\begin{lstlisting}[language=bash,caption={install boost libraries}]
+sudo apt-get install libboost-all-dev
+\end{lstlisting}
+
+\section{OpenCV}
+OpenCV is used in some plugins.
+\begin{lstlisting}[language=bash,caption={install opencv libraries}]
+sudo apt-get install libopencv-dev
+\end{lstlisting}
+
+\section{ConfDesc}
+Confdesc is a library to describe data types of configuration values.
+Confdesc is used in HyphaManager and HyphaWebManager.
+\begin{lstlisting}[language=bash,caption={git clone confdesc}]
+git clone --recursive https://github.com/FalseCAM/confdesc
+\end{lstlisting}
+\begin{lstlisting}[language=bash,caption={build poco}]
+cd confdesc
+mkdir -p build
+cd build
+cmake ..
+make -j3
+\end{lstlisting}
+
+\chapter{hypha}
+\section{hypha}
+Hypha is a library used by runner and managers.
+\begin{lstlisting}[language=bash,caption={git clone hypha}]
+git clone --recursive https://github.com/hyphaproject/hypha
+\end{lstlisting}
+Change to cloned directory and build with cmake
+\begin{lstlisting}[language=bash,caption={build hypha}]
+cd hypha
+mkdir -p build
+cd build
+cmake ..
+make -j3
+\end{lstlisting}
+
+\section{hyphahandler}
+Hyphahandler contains the logic plugins.
+\begin{lstlisting}[language=bash,caption={git clone hyphahandlers}]
+git clone --recursive https://github.com/hyphaproject/hyphahandlers
+\end{lstlisting}
+Change to cloned directory and build with cmake
+\begin{lstlisting}[language=bash,caption={build hyphahandlers}]
+cd hyphahandlers
+mkdir -p build
+cd build
+cmake -Dhypha_DIR=../hypha ..
+make -j3
+\end{lstlisting}
+
+\section{hyphaplugins}
+Hyphaplugins contains the input-output plugins.
+\begin{lstlisting}[language=bash,caption={git clone hyphaplugins}]
+git clone --recursive https://github.com/hyphaproject/hyphaplugins
+\end{lstlisting}
+Change to cloned directory and build with cmake
+\begin{lstlisting}[language=bash,caption={build hyphaplugins}]
+mkdir -p build
+cd build
+cmake -Dhypha_DIR=../hypha ..
+make -j3
+\end{lstlisting}
+
+\section{hypharunner}
+Hypharunner is a service to execute and connect the handlers and the plugins.
+\begin{lstlisting}[language=bash,caption={git clone hypharunner}]
+git clone --recursive https://github.com/hyphaproject/hypharunner
+\end{lstlisting}
+Change to cloned directory and build with cmake
+\begin{lstlisting}[language=bash,caption={build hypharunner}]
+cd hypharunner
+mkdir -p build
+cd build
+cmake -Dhypha_DIR=../hypha ..
+make -j3
+\end{lstlisting}
+
+\section{hyphamanager}
+Hyphamanger is a desktop application used to configure connected modules.
+\begin{lstlisting}[language=bash,caption={git clone hyphamanager}]
+git clone --recursive https://github.com/hyphaproject/hyphamanager
+\end{lstlisting}
+Change to cloned directory and build with cmake
+\begin{lstlisting}[language=bash,caption={build hyphamanager}]
+cd hyphamanager
+mkdir -p build
+cd build
+cmake -Dhypha_DIR=../hypha ..
+make -j3
+\end{lstlisting}
+
+\section{hyphawebmanager}
+Hyphamanger is a web server used to configure connected modules.
+\begin{lstlisting}[language=bash,caption={git clone hyphawebmanager}]
+git clone --recursive https://github.com/hyphaproject/hyphawebmanager
+\end{lstlisting}
+Change to cloned directory and build with cmake
+\begin{lstlisting}[language=bash,caption={git clone hyphawebmanager}]
+cd hyphawebmanager
+mkdir -p build
+cd build
+cmake -Dhypha_DIR=../hypha ..
+make -j3
+\end{lstlisting}
+
+
+\chapter{Project in detail}
+
+\section{Handler}
+Handler are modules that contain the logic.
+They are there own project and will be compiled into a plug-in library.
+They will be loaded dynamically by hypharunner and the managers.
+Handlers configuration will be written to database table 'handler'.
+They need a unique ID, a type, a hostname where they will run on and a json configuration string.
+
+
+\section{IO Plugins}
+
+\subsection{espeak}
+
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Parameter & Type & IO & Summary \\ \hline
+		say & String & Output & Speaks a text over speaker. \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsection{explorenfc}
+RFID cardreader for RaspberryPi.
+
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Parameter & Type & IO & Summary \\ \hline
+		device & String & Input & Id string of a rfid card. \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsection{fingerprintzfm}
+Fingerprint by Adafruit.
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Parameter & Type & IO & Summary \\ \hline
+		authuser & String & Input & Username of recognized persons fingerprint \\
+		state & String & Output & State to change to. \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsection{rfid}
+RFID cardreader for Arduino.
+
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Parameter & Type & IO & Summary \\ \hline
+		device & String & Input & ID of an rfid card. \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsection{rpigpio}
+An output plugin to control the Raspberry PI GPIOs.
+It's possible to control LEDs with this plugin.
+
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Parameter & Type & IO & Summary \\ \hline
+		red & Boolean & Output & Red LED on/off \\
+		green & Boolean & Output & Green LED on/off \\
+		yellow & Boolean & Output & Yellow LED on/off \\
+		beep & Integer & Output & Signal with frequency \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsection{wifi}
+Plugin to scan MAC Addresses connected to the Wifi network.
+
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		Parameter & Type & IO & Summary \\ \hline
+		device & String & Input & MAC Addresses of scanned Wifi devices \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\chapter{Tools}
+\section{clang-format}
+You can always write "make clang-format" in build folder to format the source files with google style guide.
+
+\end{document}
