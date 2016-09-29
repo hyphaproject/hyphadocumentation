@@ -1,0 +1,284 @@
+\documentclass[german,a4paper,11pt]{report}
+
+\usepackage[german]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+	showstringspaces=false,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue}
+}
+
+
+
+% Title Page
+\title{Hypha Admin Manual}
+\author{Christian M}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	This manual is about how to build and install hypha on a RaspberryPI.
+\end{abstract}
+\tableofcontents 
+\chapter{Hardware}
+You need the following:
+\begin{itemize}
+	\item RaspberryPI 2 B
+	\item 8GB micro SD
+	\item USB-Mouse
+	\item USB-Keyboard
+	\item USB-Wifi Stick
+\end{itemize}
+
+\chapter{Raspberry PI}
+
+\section{Betriebssystem installieren}
+First of all you have to download an operating system for the RaspberryPI.
+You will find information and downloads on following site: \url{https://www.raspberrypi.org/downloads/}
+
+This manual will work with Raspbian as operating system.
+
+\section{Copy SD Card}
+Follow the instructions on this site \url{https://www.raspberrypi.org/documentation/installation/installing-images/README.md}
+\begin{lstlisting}[language=bash,caption={copy sd card}]
+sudo fdisk -l
+sudo dd if=/dev/sdd of=~/raspberry-pi.img
+sudo dd if=~/raspberry-pi.img of=/dev/sdd
+sync
+\end{lstlisting}
+
+
+
+\section{First Setup}
+\subsection{hostname}
+Using command
+\begin{lstlisting}[language=bash,caption={raspi-config}]
+raspi-config
+\end{lstlisting}
+you can change the hostname for example to 'hypha1'.
+
+\subsection{WIFI setup}
+
+\begin{lstlisting}[language=bash,caption={interfaces}]
+sudo nano /etc/network/interfaces
+\end{lstlisting}
+Write following in the file.
+
+\begin{lstlisting}[language=bash,caption={/etc/network/interfaces}]
+auto lo
+iface lo inet loopback
+iface eth0 inet dhcp
+
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-ap-scan 1
+wpa-scan-ssid 1
+wpa-ssid "YOUR-WIFI-NAME"
+wpa-psk "YOUR-WIFI-PASSWORD"
+\end{lstlisting}
+
+Restart wifi.
+\begin{lstlisting}[language=bash,caption={restart interfaces}]
+sudo service networking restart
+\end{lstlisting}
+
+\subsection{Apt Sources}
+Install 'sudo apt-get install apt-transport-https'
+to access ssl secured repositories.
+
+\subsection{Backports}
+We need some packages that are not in the standard repository or too old.
+
+You have to write following into the \texttt{/etc/apt/sources.list} file.
+
+\begin{lstlisting}[language=bash,caption={/etc/apt/sources.list}]
+...
+deb http://ftp.de.debian.org/debian/ jessie-backports main
+\end{lstlisting}
+
+\subsection{remove X11}
+For hypha we don't need any desktop environment or X-server.
+\begin{lstlisting}[language=bash,caption={remove x11}]
+sudo aptitude remove --purge x11-common
+sudo aptitude autoremove
+\end{lstlisting}
+
+
+\subsection{Update}
+
+\begin{lstlisting}[language=bash,caption={update}]
+sudo aptitude update
+sudo aptitude upgrade
+\end{lstlisting}
+
+\section{additional packages}
+\subsection{Git, CMake}
+For downloading and building hypha you have to install git and cmake first.
+
+\begin{lstlisting}[language=bash,caption={install git, cmake}]
+sudo aptitude install git cmake
+\end{lstlisting}
+
+\subsection{MySQL}
+For data storage we use mysql as database.
+
+\begin{lstlisting}[language=bash,caption={install mysql}]
+sudo aptitude install mysql-server mysql-client
+\end{lstlisting}
+
+\subsection{QT5 Framework}
+We need qt in version 5, not 4. Qt5 can be found in the backports.
+\begin{lstlisting}[language=bash,caption={install qt5}]
+sudo aptitude install qt5-default \
+libqt5sql5-mysql libqt5sql5-odbc libqt5serialport5-dev
+\end{lstlisting}
+
+\subsection{Boost Libraries}
+\begin{lstlisting}[language=bash,caption={install boost}]
+sudo aptitude install libboost-dev \
+	libboost-thread-dev libboost-signals-dev \
+	libboost-filesystem-dev libboost-system-dev \
+	libboost-test-dev
+\end{lstlisting}
+
+\subsection{Poco Libraries}
+\begin{lstlisting}[language=bash,caption={install poco}]
+sudo aptitude install libpoco-dev
+\end{lstlisting}
+
+\subsection{OpenCV Libraries}
+There are also dependencies for the opencv libraries.
+\begin{lstlisting}[language=bash,caption={install opencv}]
+sudo aptitude install libopencv-dev libxvidcore-dev libavformat-dev\
+	libx264-dev libmjpegtools-dev
+\end{lstlisting}
+
+\subsection{python}
+There are plugins running python code.
+For that we need the python runtime and pip to install some python packages.
+\begin{lstlisting}[language=bash,caption={install python, python-pip}]
+sudo aptitude install python-dev python-pip
+\end{lstlisting}
+
+\subsection{espeak}
+Espeak is for the speaker plugin.
+\begin{lstlisting}[language=bash,caption={install libespeak}]
+sudo aptitude install espeak
+\end{lstlisting}
+
+\subsection{ldap}
+Ldap is an option as user database.
+\begin{lstlisting}[language=bash,caption={install libldap}]
+sudo aptitude install libldap2-dev
+\end{lstlisting}
+
+\subsection{nxp-explore}
+To use the exploreNFC reader we need an library from github.
+\begin{lstlisting}[language=bash,caption={compile install nxp-explore}]
+git clone https://github.com/svvitale/nxppy.git
+sudo aptitude install python-setuptools
+cd nxppy
+sudo python setup.py build install
+\end{lstlisting}
+
+\subsection{WiringPi}
+To access GPIO pins of the RaspberryPI directly we need the library WiringPI.
+\begin{lstlisting}[language=bash,caption={install wiringpi}]
+git clone git://git.drogon.net/wiringPi
+cd wiringPi
+./build
+\end{lstlisting}
+
+\chapter{Database}
+\section{Installation}
+First we install the MySQL server.
+\begin{lstlisting}[language=bash,caption={mysql-server}]
+sudo aptitude install mysql-server
+\end{lstlisting}
+Then we allow other computer in the network to access the server.
+You have to change the file \texttt{/etc/mysql/my.cnf} and comment out following:
+\begin{lstlisting}[language=bash,caption={/etc/mysql/my.cnf}]
+#bind-address           = 127.0.0.1
+\end{lstlisting}
+
+In mysql command line we create a new user for remote connection.
+
+\begin{lstlisting}[language=bash,caption={login to mysql}]
+mysql -u root -p
+\end{lstlisting}
+\begin{lstlisting}[language=sql,caption={create mysql user}]
+CREATE USER 'pi'@'%' IDENTIFIED BY 'raspberry';
+\end{lstlisting}
+\section{Create UserDatabase}
+\begin{lstlisting}[language=sql,caption={create userdatabase}]
+CREATE DATABASE `hypha\_userdb` DEFAULT CHARACTER SET utf8;
+GRANT ALL PRIVILEGES ON `hypha\_userdb`.* TO 'pi'@'%'
+IDENTIFIED BY 'raspberry';
+\end{lstlisting}
+\section{Create Database}
+\begin{lstlisting}[language=sql,caption={create database}]
+CREATE DATABASE `hypha\_db` DEFAULT CHARACTER SET utf8;
+GRANT ALL PRIVILEGES ON `hypha\_db`.* TO 'pi'@'%'
+IDENTIFIED BY 'raspberry';
+\end{lstlisting}
+
+\chapter{Additional configurations}
+\section{cronjob}
+To run hypharunner at reboot change your crontab.
+\begin{lstlisting}[language=bash]
+sudo crontab -e
+\end{lstlisting}
+\begin{lstlisting}[language=bash,caption={crontab}]
+@reboot cd /home/pi/hypharunner/build/bin && ./hypharunner
+\end{lstlisting}
+
+\section{Watchdog}
+To reboot the raspberry when it crashes install watchdog.
+\begin{lstlisting}[language=bash,caption={watchdog}]
+sudo apt-get install watchdog
+echo "bcm2708_wdog" | sudo tee -a /etc/modules
+\end{lstlisting}
+Commend out following in the watchdog config file \texttt{/etc/watchdog.conf}
+\begin{lstlisting}[language=bash,caption={/etc/watchdog.conf}]
+watchdog-device		= /dev/watchdog
+max-load-1			= 24
+\end{lstlisting}
+Add the watchdog daemon also as cronjob.
+\begin{lstlisting}[language=bash]
+sudo crontab -e
+\end{lstlisting}
+\begin{lstlisting}[language=bash,caption={crontab}]
+@reboot sleep 60 && sudo service watchdog start
+\end{lstlisting}
+
+
+\chapter{Webcam Überwachung}
+\section{Installation}
+\section{RaspiCAM}
+Das Kernelmodul für die RaspiCAM muss bei jedem Reboot gestartet werden.
+Dafür fügen wir der Datei /etc/modules ein 'bcm2835-v4l2' an.
+
+\subsection{Networkfolder}
+If you have a windows (samba) network folder you can connect to it as following:
+\begin{lstlisting}[language=bash,caption={}]
+sudo aptitude install -y cifs-utils
+sudo mkdir -p /mnt/shared/webcam
+sudo echo "//IP/webcam/ \
+/mnt/shared/webcam cifs uid=0,gid=0,rw,username=x,passwd=y 0 0"\
+ >> /etc/fstab
+ sudo crontab -e
+\end{lstlisting}
+\begin{lstlisting}[language=bash,caption={cronjob}]
+@reboot	sleep 20 && mount -a
+\end{lstlisting}
+
+\chapter{Troubleshootings}
+
+
+\end{document}
