@@ -1,19 +1,20 @@
 sudo: required
 dist: trusty
 before_install:
-- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends cmake texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra dvipng texlive-latex-recommended
+ - sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends cmake texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra dvipng texlive-latex-recommended
 script:
-- cd hyphadocumentation
-- mkdir build
-- cmake ..
-- make
+ - mkdir build
+ - cd build
+ - cmake ..
+ - make
 
 deploy:
   provider: releases
   api_key: "$GH_TOKEN"
   file:
-  - hyphadocumentation/build/adminmanual/hypha-admin-manual.pdf
-  - hyphadocumentation/build/developermanual/hypha-developer-manual.pdf
+  - build/adminmanual/hypha-admin-manual.pdf
+  - build/developermanual/hypha-developer-manual.pdf
+  - build/presentation/hypha-presentation.pdf
   skip_cleanup: true
   on:
     tags: true

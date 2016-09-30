@@ -1,0 +1,114 @@
+\part[Presentation]{Presentation}
+\section{Introduction}
+
+\begin{frame}
+	\frametitle{Introduction}
+	Hypha is a framework for homeautomation.
+	
+	It contains of following parts.
+	\begin{itemize} 
+		\item Hypha library
+		\item Runner
+		\item Manager
+		\item Webmanager
+		\item Plugins
+		\item Handlers
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Hypha Library}
+	Hypha library contains core of the framework and is used in runner, managers, handlers and plugins.
+	\begin{itemize}
+		\item c++11
+		\item Boost
+		\item Poco
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Runner}
+	\begin{itemize}
+		\item executes handlers
+		\item executes plugins
+		\item sends data to other runner
+		\item use one runner instance per device
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Runner}
+	\begin{itemize}
+		\item c++11
+		\item python
+		\item Boost
+		\item Poco
+		\item OpenCV
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Plugin}
+	\begin{itemize}
+		\item Sensor/Actor Module
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Handler}
+	\begin{itemize}
+		\item Logic / Handle Modules
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Manager}
+	\begin{itemize}
+		\item configurates device connection
+		\item configurates plugins
+		\item configurates handlers
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Manager}
+	\begin{itemize}
+		\item c++11
+		\item Qt
+		\item Boost
+		\item Poco
+	\end{itemize}
+\end{frame}
+
+\section{Hardware}
+\begin{frame}
+	\frametitle{Hardware}
+	\begin{itemize} 
+		\item Raspberry PI
+		\item Arduino
+	\end{itemize}
+\end{frame}
+
+\section{Software}
+\begin{frame}
+	\frametitle{Software}
+	\begin{itemize}
+		\item Configuration Database based (MySQL / SQLite)
+		\item HTTP based Communication
+		\item JSON based Communication
+		\item DNS based Network
+	\end{itemize}
+\end{frame}
+
+\section{TODO}
+\begin{frame}
+	\frametitle{TODO}
+	\begin{itemize} 
+		\item HTTPS Communication
+		\item DNS to P2P/Certificate
+		\item Communication Cache/Storage
+	\end{itemize}
+\end{frame}
+
+
+
