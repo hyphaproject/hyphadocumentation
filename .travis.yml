@@ -7,14 +7,17 @@ script:
  - cd build
  - cmake ..
  - make
+ - cd ..
+ - ls build
+ - ls build/adminmanual
 
 deploy:
   provider: releases
   api_key: "$GH_TOKEN"
   file:
-  - build/adminmanual/hypha-admin-manual.pdf
-  - build/developermanual/hypha-developer-manual.pdf
-  - build/presentation/hypha-presentation.pdf
+  - $TRAVIS_BUILD_DIR/build/adminmanual/hypha-admin-manual.pdf
+  - $TRAVIS_BUILD_DIR/build/developermanual/hypha-developer-manual.pdf
+  - $TRAVIS_BUILD_DIR/build/presentation/hypha-presentation.pdf
   skip_cleanup: true
   on:
     tags: true
