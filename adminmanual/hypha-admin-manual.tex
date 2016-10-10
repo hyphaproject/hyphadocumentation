@@ -257,6 +257,38 @@ sudo crontab -e
 @reboot sleep 60 && sudo service watchdog start
 \end{lstlisting}
 
+\section{KadNode}
+KadNode is a P2P Service to resolve public keys to network ip addresses.
+
+\subsection{Installation}
+We have do download sources, create and install kadnode package.
+
+\begin{lstlisting}[language=bash,caption={install kadnode}]
+sudo apt-get install build-essential debhelper devscripts hardening-includes
+sudo apt-get install libnatpmp-dev libminiupnpc-dev libsodium-dev
+git clone https://github.com/mwarning/KadNode
+cd KadNode
+dpkg-buildpackage
+sudo dpkg -i kadnode.*.deb
+\end{lstlisting}
+
+\subsection{Key Pair}
+
+Now we have to create a public and private key pair.
+\begin{lstlisting}[language=bash,caption={kadnode key pair}]
+kadnode --auth-gen-keys
+\end{lstlisting}
+
+\subsection{kadnode.conf}
+
+Edit file /etc/kadnode/kadnode.conf and add
+\begin{lstlisting}[language=bash,caption={/etc/kadnode/kadnode.conf}]
+--value-id <secret key>
+\end{lstlisting}
+After that restart the service:
+\begin{lstlisting}[language=bash,caption={}]
+/etc/init.d/kadnode restart
+\end{lstlisting}
 
 \chapter{Webcam Überwachung}
 \section{Installation}

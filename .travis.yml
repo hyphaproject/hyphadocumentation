@@ -8,8 +8,6 @@ script:
  - cmake ..
  - make
  - cd ..
- - ls build
- - ls build/adminmanual
 
 deploy:
   provider: releases
